@@ -2,7 +2,8 @@ fileFormatVersion: 2
 guid: a412eaccd6800044291a4472ad538780
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - kawase: {fileID: 2100000, guid: 401922b36b71ab44ab6c75471777ec32, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

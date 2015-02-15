@@ -30,7 +30,7 @@
 			Inter OUT;
 			OUT.vertex = mul(UNITY_MATRIX_MVP, IN.vertex);
 			#if UNITY_UV_STARTS_AT_TOP && defined(FLIP_UV_Y)
-			if (_MainTex_TexelSize.y)
+			if (_MainTex_TexelSize.y < 0)
 				IN.uv.y = 1 - IN.uv.y;
 			#endif
 			OUT.uv = IN.uv;
