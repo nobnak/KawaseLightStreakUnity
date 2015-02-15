@@ -40,7 +40,6 @@
 		
 		Pass {
 			CGPROGRAM
-			#pragma target 5.0
 			#pragma vertex vert
 			#pragma fragment frag
 			
@@ -54,7 +53,6 @@
 		Pass {
 			CGPROGRAM
 			#define FLIP_UV_Y
-			#pragma target 5.0
 			#pragma vertex vert
 			#pragma fragment frag
 
@@ -75,7 +73,6 @@
 
 			CGPROGRAM
 			#define FLIP_UV_Y
-			#pragma target 5.0
 			#pragma vertex vert
 			#pragma fragment frag
 			
