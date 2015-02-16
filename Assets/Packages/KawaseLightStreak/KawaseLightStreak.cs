@@ -65,7 +65,7 @@ public class KawaseLightStreak : MonoBehaviour {
 
 		var gain = kawase.GetFloat(PROP_GAIN);
 		GUILayout.Label(string.Format("Gain:{0:f2}", gain));
-		gain = GUILayout.HorizontalSlider(gain, 0f, 1f);
+		gain = GUILayout.HorizontalSlider(gain, 0f, 0.1f);
 		kawase.SetFloat(PROP_GAIN, gain);
 
 		GUILayout.Label(string.Format("Atten:{0:f3}", atten));
