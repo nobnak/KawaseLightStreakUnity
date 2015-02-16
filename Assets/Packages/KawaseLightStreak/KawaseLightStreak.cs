@@ -16,7 +16,8 @@ public class KawaseLightStreak : MonoBehaviour {
 	public enum ShapeEnum { Cross = 0, Star = 1, Snow = 2, Octet = 3 }
 	public static readonly string[] ShapeLabels = new string[]{ "Cross", "Star", "Snow", "Octet" };
 	public static readonly int[] ShapeNums = new int[]{ 4, 5, 6, 8 };
-	
+
+	public KeyCode guiKey = KeyCode.K;
 	public Material kawase;
 	public float atten = 0.95f;
 	public int n = 3;
@@ -48,9 +49,16 @@ public class KawaseLightStreak : MonoBehaviour {
 		RenderTexture.ReleaseTemporary(rt1);
 	}
 	void OnGUI() {
-		if (guiOn)
+		if (CheckCamera() && guiOn)
 			_win = GUILayout.Window(0, _win, Window, "UI");
 	}
+	void Update() {
+		if (CheckCamera() && Input.GetKeyDown(guiKey)) {
+			guiOn = !guiOn;
+			Screen.showCursor = guiOn;
+		}
+	}
+	bool CheckCamera() { return camera != null && camera.enabled; }
 
 	void Window(int id) {
 		GUILayout.BeginVertical(GUILayout.Width(200));
@@ -59,6 +67,9 @@ public class KawaseLightStreak : MonoBehaviour {
 		GUILayout.Label(string.Format("Gain:{0:f2}", gain));
 		gain = GUILayout.HorizontalSlider(gain, 0f, 1f);
 		kawase.SetFloat(PROP_GAIN, gain);
+
+		GUILayout.Label(string.Format("Atten:{0:f3}", atten));
+		atten = GUILayout.HorizontalSlider(atten, 0.9f, 0.95f);
 
 		GUILayout.Label(string.Format("Angle:{0:f1}", angle));
 		angle = GUILayout.HorizontalSlider(angle, 0f, 360f);
