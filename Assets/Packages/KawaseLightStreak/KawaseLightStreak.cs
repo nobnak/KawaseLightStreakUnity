@@ -111,7 +111,11 @@ namespace KawaseLightStreak {
 			GUILayout.Label(string.Format("Angle:{0:f1}", data.angle));
 			data.angle = GUILayout.HorizontalSlider(data.angle, 0f, 360f);
 
+			GUILayout.Label("Shape");
 			data.shape = (LightStreakData.ShapeEnum)GUILayout.Toolbar((int)data.shape, LightStreakData.ShapeLabels);
+
+			GUILayout.Label("Filter");
+			data.filter = (LightStreakData.FilterModeEnum)GUILayout.Toolbar((int)data.filter, LightStreakData.FilterModeLabels);
 
 			GUILayout.EndVertical();
 		}
