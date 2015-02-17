@@ -5,9 +5,12 @@ namespace KawaseLightStreak {
 
 	[ExecuteInEditMode]
 	public class KawaseLightStreak : MonoBehaviour {
+		public enum OutputModeEnum { Normal = 0, LowSrc }
+
 		public const int PASS_BRIGHT = 0;
 		public const int PASS_STREAK = 1;
 		public const int PASS_ADD = 2;
+		public const int PASS_FLIP_COPY = 3;
 
 		public const string PROP_GAIN = "_Gain";
 		public const string PROP_DIR = "_Dir";
@@ -17,30 +20,43 @@ namespace KawaseLightStreak {
 
 		public LightStreakData data;
 
+		public OutputModeEnum output;
 		public KeyCode guiKey = KeyCode.K;
 		public bool guiOn = false;
 
 		private Rect _win = new Rect(10, 10, 0, 0);
 
 		void OnRenderImage(RenderTexture src, RenderTexture dst) {
-			var width = src.width >> data.lod;
-			var height = src.height >> data.lod;
-			var rt0 = RenderTexture.GetTemporary(width, height, 0, src.format, RenderTextureReadWrite.Linear);
-			var rt1 = RenderTexture.GetTemporary(width, height, 0, src.format, RenderTextureReadWrite.Linear);
-
-			Graphics.Blit(src, dst);
-
-			var shapeNum = LightStreakData.ShapeNums[(int)data.shape];
-			var dtheta = TWO_PI / shapeNum;
-			for (var i = 0; i < shapeNum; i++) {
-				rt0.DiscardContents();
-				Graphics.Blit(src, rt0, data.kawase, PASS_BRIGHT);
-				LightStreak(ref rt0, ref rt1, i * dtheta + data.angle * Mathf.Deg2Rad);
-				Graphics.Blit(rt0, dst, data.kawase, PASS_ADD);
+			var lowSrc = src;
+			switch (data.filter) {
+			case LightStreakData.FilterModeEnum.Pyramid:
+				if (data.lod > 0) {
+					lowSrc = Half(src, true);
+					for (var i = 1; i < data.lod; i++) {
+						var lowDst = Half(lowSrc, true);
+						RenderTexture.ReleaseTemporary(lowSrc);
+						lowSrc = lowDst;
+					}
+				}
+				break;
+			case LightStreakData.FilterModeEnum.Direct:
+				lowSrc = RenderTexture.GetTemporary(src.width >> data.lod, src.height >> data.lod, 0, src.format);
+				Graphics.Blit(src, lowSrc, data.kawase, PASS_FLIP_COPY);
+				break;
 			}
 
-			RenderTexture.ReleaseTemporary(rt0);
-			RenderTexture.ReleaseTemporary(rt1);
+			switch (output) {
+			case OutputModeEnum.LowSrc:
+				Graphics.Blit(lowSrc, dst);
+				break;
+			default:
+				Graphics.Blit(src, dst);
+				StarGlow(lowSrc, dst);
+				break;
+			}
+			
+			if (data.lod > 0)
+				RenderTexture.ReleaseTemporary(lowSrc);
 		}
 		void OnGUI() {
 			if (CheckCamera() && guiOn)
@@ -52,8 +68,35 @@ namespace KawaseLightStreak {
 				Screen.showCursor = guiOn;
 			}
 		}
+
+		void StarGlow(RenderTexture lowSrc, RenderTexture dst) {
+			var shapeNum = LightStreakData.ShapeNums [(int)data.shape];
+			var rt0 = RenderTexture.GetTemporary (lowSrc.width, lowSrc.height, 0, lowSrc.format, RenderTextureReadWrite.Linear);
+			var rt1 = RenderTexture.GetTemporary (lowSrc.width, lowSrc.height, 0, lowSrc.format, RenderTextureReadWrite.Linear);
+			var dtheta = TWO_PI / shapeNum;
+			for (var i = 0; i < shapeNum; i++) {
+				rt0.DiscardContents ();
+				Graphics.Blit (lowSrc, rt0, data.kawase, PASS_BRIGHT);
+				LightStreak (ref rt0, ref rt1, i * dtheta + data.angle * Mathf.Deg2Rad);
+				Graphics.Blit (rt0, dst, data.kawase, PASS_ADD);
+			}
+			RenderTexture.ReleaseTemporary (rt0);
+			RenderTexture.ReleaseTemporary (rt1);
+		}
+
 		bool CheckCamera() { return camera != null && camera.enabled; }
 
+		RenderTexture Half(RenderTexture src, bool flip) {
+			var width = src.width >> 1;
+			var height = src.height >> 1;
+			var dst = RenderTexture.GetTemporary(width, height, 0, src.format);
+			dst.filterMode = FilterMode.Bilinear;
+			if (flip)
+				Graphics.Blit(src, dst, data.kawase, PASS_FLIP_COPY);
+			else
+				Graphics.Blit(src, dst);
+			return dst;
+		}
 		void Window(int id) {
 			GUILayout.BeginVertical(GUILayout.Width(200));
 

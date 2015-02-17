@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class Gen : MonoBehaviour {
+	public float size = 1f;
 	public float radius = 10f;
 	public int count = 100;
 	public GameObject[] prefabs;
@@ -11,6 +12,7 @@ public class Gen : MonoBehaviour {
 			var go = (GameObject)Instantiate(prefabs[i % prefabs.Length], 
 			                                 radius * Random.insideUnitSphere, Random.rotationUniform);
 			go.transform.SetParent(transform, false);			
+			go.transform.localScale = size * Vector3.one;
 		}
 	}
 }

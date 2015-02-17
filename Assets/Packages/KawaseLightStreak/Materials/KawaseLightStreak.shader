@@ -7,7 +7,7 @@
 		_Atten ("Attenuation", Float) = 0.95
 	}
 	SubShader {
-		LOD 200 Cull Off ZTest Always Fog { Mode Off }
+		ZTest Always Cull Off ZWrite Off Fog { Mode Off }
 		
 		CGINCLUDE
 		sampler2D _MainTex;
@@ -29,7 +29,7 @@
 		Inter vert(Input IN) {
 			Inter OUT;
 			OUT.vertex = mul(UNITY_MATRIX_MVP, IN.vertex);
-			#if UNITY_UV_STARTS_AT_TOP && defined(FLIP_UV_Y)
+			#if UNITY_UV_STARTS_AT_TOP && defined(FLIP_UV_Y_ON)
 			if (_MainTex_TexelSize.y < 0)
 				IN.uv.y = 1 - IN.uv.y;
 			#endif
@@ -52,7 +52,7 @@
 		
 		Pass {
 			CGPROGRAM
-			#define FLIP_UV_Y
+			#define FLIP_UV_Y_ON
 			#pragma vertex vert
 			#pragma fragment frag
 
@@ -72,13 +72,26 @@
 			Blend One One
 
 			CGPROGRAM
-			#define FLIP_UV_Y
+			#define FLIP_UV_Y_ON
 			#pragma vertex vert
 			#pragma fragment frag
 			
 			float4 frag(Inter IN) : COLOR {
 				return tex2D(_MainTex, IN.uv);
 			}			
+			ENDCG
+		}
+
+		
+		Pass {
+			CGPROGRAM
+			#define FLIP_UV_Y_ON
+			#pragma vertex vert
+			#pragma fragment frag
+			
+			float4 frag(Inter IN) : COLOR {
+				return tex2D(_MainTex, IN.uv);
+			}
 			ENDCG
 		}
 	} 
