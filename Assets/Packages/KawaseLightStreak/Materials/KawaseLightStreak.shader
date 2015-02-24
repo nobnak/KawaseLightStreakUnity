@@ -10,6 +10,7 @@
 		ZTest Always Cull Off ZWrite Off Fog { Mode Off }
 		
 		CGINCLUDE
+		#define GAMMA 2.2
 		sampler2D _MainTex;
 		float4 _MainTex_TexelSize;
 		float _Gain;
@@ -81,16 +82,23 @@
 			}			
 			ENDCG
 		}
-
 		
 		Pass {
 			CGPROGRAM
 			#define FLIP_UV_Y_ON
+			#pragma multi_compile GAMMA_OFF GAMMA_ON GAMMA_INV
 			#pragma vertex vert
 			#pragma fragment frag
 			
 			float4 frag(Inter IN) : COLOR {
-				return tex2D(_MainTex, IN.uv);
+				float4 c = tex2D(_MainTex, IN.uv);
+				#if GAMMA_ON
+				return pow(c, GAMMA);
+				#elif GAMMA_INV
+				return pow(c, 1/GAMMA);
+				#else
+				return c;
+				#endif
 			}
 			ENDCG
 		}

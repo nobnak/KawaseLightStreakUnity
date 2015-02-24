@@ -12,6 +12,10 @@ namespace KawaseLightStreak {
 		public const int PASS_ADD = 2;
 		public const int PASS_FLIP_COPY = 3;
 
+		public const string KEYWORD_GAMMA_OFF = "GAMMA_OFF";
+		public const string KEYWORD_GAMMA_ON  = "GAMMA_ON";
+		public const string KEYWORD_GAMMA_INV = "GAMMA_INV";
+
 		public const string PROP_GAIN = "_Gain";
 		public const string PROP_DIR = "_Dir";
 		public const string PROP_OFFSET = "_Offset";
@@ -41,6 +45,7 @@ namespace KawaseLightStreak {
 				break;
 			case LightStreakData.FilterModeEnum.Direct:
 				lowSrc = RenderTexture.GetTemporary(src.width >> data.lod, src.height >> data.lod, 0, src.format);
+				data.kawase.EnableKeyword(KEYWORD_GAMMA_OFF);
 				Graphics.Blit(src, lowSrc, data.kawase, PASS_FLIP_COPY);
 				break;
 			}
@@ -91,6 +96,7 @@ namespace KawaseLightStreak {
 			var height = src.height >> 1;
 			var dst = RenderTexture.GetTemporary(width, height, 0, src.format);
 			dst.filterMode = FilterMode.Bilinear;
+			data.kawase.EnableKeyword(KEYWORD_GAMMA_OFF);
 			if (flip)
 				Graphics.Blit(src, dst, data.kawase, PASS_FLIP_COPY);
 			else
@@ -118,6 +124,7 @@ namespace KawaseLightStreak {
 			data.filter = (LightStreakData.FilterModeEnum)GUILayout.Toolbar((int)data.filter, LightStreakData.FilterModeLabels);
 
 			GUILayout.EndVertical();
+			GUI.DragWindow();
 		}
 
 		void LightStreak(ref RenderTexture rt0, ref RenderTexture rt1, float dirInRad) {

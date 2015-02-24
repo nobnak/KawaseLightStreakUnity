@@ -11,6 +11,7 @@ public class Gen : MonoBehaviour {
 		for (var i = 0; i < count; i++) {
 			var go = (GameObject)Instantiate(prefabs[i % prefabs.Length], 
 			                                 radius * Random.insideUnitSphere, Random.rotationUniform);
+			go.layer = gameObject.layer;
 			go.transform.SetParent(transform, false);			
 			go.transform.localScale = size * Vector3.one;
 		}
