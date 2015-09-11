@@ -1,6 +1,8 @@
 # Light Streak Shader for Unity
 
  - Algorithm Based on Kawase's Light Streak Shader [1]
+
+[Unity Package](KawaseLightStreak.unitypackage)
  
  [![Demo](Html/Thumbnail.jpg)](http://nobnak.github.io/SceneSamples/KawaseLightStreakUnity/KawaseLightStreakUnity.html)
 
