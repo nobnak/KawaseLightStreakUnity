@@ -70,7 +70,7 @@ namespace KawaseLightStreak {
 		void Update() {
 			if (CheckCamera() && Input.GetKeyDown(guiKey)) {
 				guiOn = !guiOn;
-				Screen.showCursor = guiOn;
+				Cursor.visible = guiOn;
 			}
 		}
 
@@ -89,7 +89,7 @@ namespace KawaseLightStreak {
 			RenderTexture.ReleaseTemporary (rt1);
 		}
 
-		bool CheckCamera() { return camera != null && camera.enabled; }
+		bool CheckCamera() { return GetComponent<Camera>() != null && GetComponent<Camera>().enabled; }
 
 		RenderTexture Half(RenderTexture src, bool flip) {
 			var width = src.width >> 1;
