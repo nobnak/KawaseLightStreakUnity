@@ -5,6 +5,7 @@
 		_Dir ("Streak Dir", Vector) = (1, 0, 0, 0)
 		_Offset ("Pixel OFfset", Float) = 1
 		_Atten ("Attenuation", Float) = 0.95
+		_Thresh ("Threshold", FLoat) = 0.5
 	}
 	SubShader {
 		ZTest Always Cull Off ZWrite Off Fog { Mode Off }
@@ -17,6 +18,7 @@
 		float4 _Dir;
 		float _Offset;
 		float _Atten;
+		float _Thresh;
 
 		struct Input {
 			float4 vertex : POSITION;
@@ -46,6 +48,9 @@
 			
 			float4 frag(Inter IN) : COLOR {
 				float4 c = tex2D(_MainTex, IN.uv);
+				float l = dot(c.rgb, 0.333);
+				if (l < _Thresh)
+					return 0;
 				return float4(c.rgb * c.a * _Gain, c.a);
 			}
 			ENDCG

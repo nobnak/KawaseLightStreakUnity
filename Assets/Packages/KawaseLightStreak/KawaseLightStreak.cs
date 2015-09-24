@@ -16,10 +16,6 @@ namespace KawaseLightStreak {
 		public const string KEYWORD_GAMMA_ON  = "GAMMA_ON";
 		public const string KEYWORD_GAMMA_INV = "GAMMA_INV";
 
-		public const string PROP_GAIN = "_Gain";
-		public const string PROP_DIR = "_Dir";
-		public const string PROP_OFFSET = "_Offset";
-		public const string PROP_ATTEN = "_Atten";
 		public const float TWO_PI = 2f * Mathf.PI;
 
 		public LightStreakData data;
@@ -80,6 +76,9 @@ namespace KawaseLightStreak {
 			if (CheckCamera() && guiOn)
 				_win = GUILayout.Window(0, _win, Window, "UI");
 		}
+		void Start() {
+			data.Load ();
+		}
 		void Update() {
 			if (CheckCamera() && Input.GetKeyDown(guiKey)) {
 				guiOn = !guiOn;
@@ -89,7 +88,9 @@ namespace KawaseLightStreak {
 
 		void ReleaseGlowTex() {
 			if (Application.isPlaying)
-				Destroy(_glowTex);
+				Destroy (_glowTex);
+			else
+				DestroyImmediate (_glowTex);
 		}
 		void InitGlowTex(int width, int height) {
 			if (_glowTex == null || _glowTex.width != width || _glowTex.height != height) {
@@ -141,10 +142,15 @@ namespace KawaseLightStreak {
 		void Window(int id) {
 			GUILayout.BeginVertical(GUILayout.Width(200));
 
-			var gain = data.kawase.GetFloat(PROP_GAIN);
+			var gain = data.kawase_gain;
 			GUILayout.Label(string.Format("Gain:{0:f2}", gain));
 			gain = GUILayout.HorizontalSlider(gain, 0f, 1f);
-			data.kawase.SetFloat(PROP_GAIN, gain);
+			data.kawase_gain = gain;
+
+			var thresh = data.kawase_threshold;
+			GUILayout.Label (string.Format ("Threshold:{0:f2}", thresh));
+			thresh = GUILayout.HorizontalSlider (thresh, 0f, 1f);
+			data.kawase_threshold = thresh;
 
 			GUILayout.Label(string.Format("Atten:{0:f3}", data.atten));
 			data.atten = GUILayout.HorizontalSlider(data.atten, 0.9f, 0.95f);
@@ -160,6 +166,8 @@ namespace KawaseLightStreak {
 
 			GUILayout.EndVertical();
 			GUI.DragWindow();
+
+			data.Load ();
 		}
 
 		void LightStreak(ref RenderTexture rt0, ref RenderTexture rt1, float dirInRad) {
@@ -168,9 +176,9 @@ namespace KawaseLightStreak {
 				for (var j = 0; j < i; j++)
 					texelOffset *= 4;
 				var absorb = Mathf.Pow (data.atten, texelOffset);
-				data.kawase.SetFloat(PROP_OFFSET, texelOffset);
-				data.kawase.SetFloat(PROP_ATTEN, absorb);
-				data.kawase.SetVector(PROP_DIR, new Vector4(Mathf.Cos(dirInRad), Mathf.Sin(dirInRad), 0, 0));
+				data.kawase.SetFloat(LightStreakData.PROP_OFFSET, texelOffset);
+				data.kawase.SetFloat(LightStreakData.PROP_ATTEN, absorb);
+				data.kawase.SetVector(LightStreakData.PROP_DIR, new Vector4(Mathf.Cos(dirInRad), Mathf.Sin(dirInRad), 0, 0));
 				rt1.DiscardContents();
 				Graphics.Blit (rt0, rt1, data.kawase, PASS_STREAK);
 				var tmp = rt0;
