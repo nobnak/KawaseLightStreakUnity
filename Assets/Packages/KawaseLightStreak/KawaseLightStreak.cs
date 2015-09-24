@@ -5,7 +5,7 @@ namespace KawaseLightStreak {
 
 	[ExecuteInEditMode]
 	public class KawaseLightStreak : MonoBehaviour {
-		public enum OutputModeEnum { Normal = 0, LowSrc }
+		public enum OutputModeEnum { Normal = 0, LowSrc, Glow }
 
 		public const int PASS_BRIGHT = 0;
 		public const int PASS_STREAK = 1;
@@ -27,8 +27,11 @@ namespace KawaseLightStreak {
 		public OutputModeEnum output;
 		public KeyCode guiKey = KeyCode.K;
 		public bool guiOn = false;
+		[SerializeField]
+		public RenderTextureEvent OnCreateGlowTex;
 
-		private Rect _win = new Rect(10, 10, 0, 0);
+		Rect _win = new Rect(10, 10, 0, 0);
+		RenderTexture _glowTex;
 
 		void OnRenderImage(RenderTexture src, RenderTexture dst) {
 			var lowSrc = src;
@@ -50,18 +53,28 @@ namespace KawaseLightStreak {
 				break;
 			}
 
+			InitGlowTex(src.width, src.height);
+			StarGlow(lowSrc, _glowTex);
+
 			switch (output) {
 			case OutputModeEnum.LowSrc:
 				Graphics.Blit(lowSrc, dst);
 				break;
+			case OutputModeEnum.Glow:
+				Clear(dst);
+				Graphics.Blit(_glowTex, dst, data.kawase, PASS_ADD);
+				break;
 			default:
 				Graphics.Blit(src, dst);
-				StarGlow(lowSrc, dst);
+				Graphics.Blit(_glowTex, dst, data.kawase, PASS_ADD);
 				break;
 			}
 			
 			if (data.lod > 0)
 				RenderTexture.ReleaseTemporary(lowSrc);
+		}
+		void OnDestroy() {
+			ReleaseGlowTex();
 		}
 		void OnGUI() {
 			if (CheckCamera() && guiOn)
@@ -74,6 +87,21 @@ namespace KawaseLightStreak {
 			}
 		}
 
+		void ReleaseGlowTex() {
+			if (Application.isPlaying)
+				Destroy(_glowTex);
+		}
+		void InitGlowTex(int width, int height) {
+			if (_glowTex == null || _glowTex.width != width || _glowTex.height != height) {
+				ReleaseGlowTex();
+				_glowTex = new RenderTexture(width, height, 24);
+				_glowTex.antiAliasing = (QualitySettings.antiAliasing == 0 ? 1 : QualitySettings.antiAliasing);
+				_glowTex.filterMode = FilterMode.Bilinear;
+				_glowTex.wrapMode = TextureWrapMode.Clamp;
+				OnCreateGlowTex.Invoke(_glowTex);
+			}
+			Clear(_glowTex);
+		}
 		void StarGlow(RenderTexture lowSrc, RenderTexture dst) {
 			var shapeNum = LightStreakData.ShapeNums [(int)data.shape];
 			var rt0 = RenderTexture.GetTemporary (lowSrc.width, lowSrc.height, 0, lowSrc.format, RenderTextureReadWrite.Linear);
@@ -87,6 +115,13 @@ namespace KawaseLightStreak {
 			}
 			RenderTexture.ReleaseTemporary (rt0);
 			RenderTexture.ReleaseTemporary (rt1);
+		}
+
+		void Clear (RenderTexture target) {
+			var old = RenderTexture.active;
+			RenderTexture.active = target;
+			GL.Clear (true, true, Color.clear);
+			RenderTexture.active = old;
 		}
 
 		bool CheckCamera() { return GetComponent<Camera>() != null && GetComponent<Camera>().enabled; }
@@ -144,4 +179,7 @@ namespace KawaseLightStreak {
 			}
 		}
 	}
+
+	[System.Serializable]
+	public class RenderTextureEvent : UnityEngine.Events.UnityEvent<RenderTexture> {}
 }
