@@ -3,7 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System.IO;
 
-namespace nobnak.Config {
+namespace KawaseLightStreak {
 
 	public static class ScriptableObjUtil {
 

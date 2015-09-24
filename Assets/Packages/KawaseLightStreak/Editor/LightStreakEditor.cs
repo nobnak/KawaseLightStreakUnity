@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using nobnak.Config;
 using UnityEditor;
 
 namespace KawaseLightStreak {
