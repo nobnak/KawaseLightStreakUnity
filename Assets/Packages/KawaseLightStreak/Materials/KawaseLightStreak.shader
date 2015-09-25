@@ -5,13 +5,15 @@
 		_Dir ("Streak Dir", Vector) = (1, 0, 0, 0)
 		_Offset ("Pixel OFfset", Float) = 1
 		_Atten ("Attenuation", Float) = 0.95
-		_Thresh ("Threshold", FLoat) = 0.5
+		_Thresh ("Threshold", Float) = 0.5
+		_Boundary ("Boundary in Px", Int) = 12
 	}
 	SubShader {
 		ZTest Always Cull Off ZWrite Off Fog { Mode Off }
 		
 		CGINCLUDE
 		#define GAMMA 2.2
+		#include "UnityCG.cginc"
 		sampler2D _MainTex;
 		float4 _MainTex_TexelSize;
 		float _Gain;
@@ -19,6 +21,7 @@
 		float _Offset;
 		float _Atten;
 		float _Thresh;
+		int _Boundary;
 
 		struct Input {
 			float4 vertex : POSITION;
@@ -27,6 +30,11 @@
 		struct Inter {
 			float4 vertex : POSITION;
 			float2 uv : TEXCOORD0;
+		};
+		struct InterPx {
+			float4 vertex : POSITION;
+			float2 uv : TEXCOORD0;
+			float2 px : TEXCOORD1;
 		};
 		
 		Inter vert(Input IN) {
@@ -39,19 +47,32 @@
 			OUT.uv = IN.uv;
 			return OUT;
 		}
+		InterPx vertPx(Input IN) {
+			InterPx OUT;
+			OUT.vertex = mul(UNITY_MATRIX_MVP, IN.vertex);
+			#if UNITY_UV_STARTS_AT_TOP && defined(FLIP_UV_Y_ON)
+			if (_MainTex_TexelSize.y < 0)
+				IN.uv.y = 1 - IN.uv.y;
+			#endif
+			OUT.uv = IN.uv;
+			OUT.px = IN.uv * _ScreenParams.xy;
+			return OUT;
+		}
 		ENDCG
 		
 		Pass {
 			CGPROGRAM
-			#pragma vertex vert
+			#pragma vertex vertPx
 			#pragma fragment frag
 			
-			float4 frag(Inter IN) : COLOR {
+			float4 frag(InterPx IN) : COLOR {
 				float4 c = tex2D(_MainTex, IN.uv);
 				float l = dot(c.rgb, 0.333);
 				if (l < _Thresh)
 					return 0;
-				return float4(c.rgb * c.a * _Gain, c.a);
+				float2 b = smoothstep(float2(0, 0), _Boundary, IN.px)
+					* smoothstep(float2(0, 0), _Boundary, _ScreenParams.xy - IN.px);
+				return float4(c.rgb * c.a * _Gain * b.x * b.y, c.a);
 			}
 			ENDCG
 		}

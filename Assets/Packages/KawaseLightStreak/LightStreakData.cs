@@ -16,6 +16,7 @@ namespace KawaseLightStreak {
 		public const string PROP_OFFSET = "_Offset";
 		public const string PROP_ATTEN = "_Atten";
 		public const string PROP_THRESHOLD = "_Thresh";
+		public const string PROP_BOUNDARY = "_Boundary";
 		
 		public FilterModeEnum filter;
 		public ShapeEnum shape = ShapeEnum.Cross;
@@ -31,6 +32,7 @@ namespace KawaseLightStreak {
 		public void Load() {
 			kawase.SetFloat(PROP_GAIN, kawase_gain);
 			kawase.SetFloat(PROP_THRESHOLD, kawase_threshold);
+			kawase.SetInt(PROP_BOUNDARY, n * 4);
 		}
 	}
 }
