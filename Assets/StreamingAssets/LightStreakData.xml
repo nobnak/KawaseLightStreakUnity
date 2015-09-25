@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <filter>Direct</filter>
+  <shape>Snow</shape>
+  <atten>0.935937464</atten>
+  <n>3</n>
+  <lod>2</lod>
+  <angle>33.75</angle>
+  <kawase_gain>0.125</kawase_gain>
+  <kawase_threshold>0.208333328</kawase_threshold>
+</Data>

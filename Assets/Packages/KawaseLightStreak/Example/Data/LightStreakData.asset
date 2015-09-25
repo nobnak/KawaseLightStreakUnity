@@ -11,6 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7a509c953eb37e46b1ca8aa017d07ca, type: 3}
   m_Name: LightStreakData
   m_EditorClassIdentifier: 
+  savePath: LightStreakData.xml
   filter: 1
   shape: 2
   atten: .925000012

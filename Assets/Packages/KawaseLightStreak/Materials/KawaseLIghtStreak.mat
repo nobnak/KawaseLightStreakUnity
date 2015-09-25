@@ -26,7 +26,7 @@ Material:
       data:
         first:
           name: _Gain
-        second: .238749996
+        second: .125
       data:
         first:
           name: _Offset
@@ -34,11 +34,11 @@ Material:
       data:
         first:
           name: _Atten
-        second: .287255138
+        second: .346696377
       data:
         first:
           name: _Thresh
-        second: .359375
+        second: .208333328
       data:
         first:
           name: _Boundary
@@ -59,4 +59,4 @@ Material:
       data:
         first:
           name: _Dir
-        second: {r: .751839936, g: -.659345686, b: 0, a: 0}
+        second: {r: .896872818, g: -.442288548, b: 0, a: 0}
