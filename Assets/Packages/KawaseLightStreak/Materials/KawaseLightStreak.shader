@@ -72,7 +72,7 @@
 					return 0;
 				float2 b = smoothstep(float2(0, 0), _Boundary, IN.px)
 					* smoothstep(float2(0, 0), _Boundary, _ScreenParams.xy - IN.px);
-				return float4(c.rgb * c.a * _Gain * b.x * b.y, c.a);
+				return float4(c.rgb * c.a * _Gain * b.x * b.y, 0);
 			}
 			ENDCG
 		}
