@@ -116,7 +116,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a412eaccd6800044291a4472ad538780, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: 8ab4c6bd71b0c304e99131e0482b1da2, type: 2}
+  data:
+    savePath: LightStreakData.xml
+    kawase: {fileID: 2100000, guid: 401922b36b71ab44ab6c75471777ec32, type: 2}
+    data:
+      filter: 0
+      shape: 2
+      atten: .935937464
+      n: 3
+      lod: 2
+      angle: 33.75
+      rotation_speed: .208333403
+      kawase_gain: .125
+      kawase_threshold: .208333328
   output: 0
   guiKey: 107
   guiOn: 0

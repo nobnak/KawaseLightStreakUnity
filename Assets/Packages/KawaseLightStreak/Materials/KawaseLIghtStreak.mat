@@ -50,13 +50,13 @@ Material:
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
+          name: _Dir
+        second: {r: .896872818, g: -.442288548, b: 0, a: 0}
+      data:
+        first:
           name: _Offset
         second: {r: 4, g: 8, b: 12, a: 0}
       data:
         first:
           name: _Atten
         second: {r: .814506233, g: .663420379, b: .540360034, a: 0}
-      data:
-        first:
-          name: _Dir
-        second: {r: .896872818, g: -.442288548, b: 0, a: 0}

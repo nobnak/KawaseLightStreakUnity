@@ -6,6 +6,7 @@
   <n>3</n>
   <lod>2</lod>
   <angle>33.75</angle>
+  <rotation_speed>0.2083334</rotation_speed>
   <kawase_gain>0.125</kawase_gain>
   <kawase_threshold>0.208333328</kawase_threshold>
 </Data>

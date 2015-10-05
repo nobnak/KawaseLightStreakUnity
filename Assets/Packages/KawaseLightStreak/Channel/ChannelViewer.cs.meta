@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: abd2b6553bd583e45afca5e8ee189513
+timeCreated: 1443237421
+licenseType: Pro
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - channelViewer: {fileID: 2100000, guid: 3fdd537901deaa64fbfd64a274be8bdf, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

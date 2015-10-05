@@ -17,6 +17,7 @@ namespace KawaseLightStreak {
 		public const string KEYWORD_GAMMA_INV = "GAMMA_INV";
 
 		public const float TWO_PI = 2f * Mathf.PI;
+		public const float DEG360 = 360f;
 
 		public LightStreakData data;
 
@@ -49,8 +50,9 @@ namespace KawaseLightStreak {
 				break;
 			}
 
+			float angle = data.data.angle + Mathf.Repeat(data.data.rotation_speed * Time.timeSinceLevelLoad, 1f) * DEG360;
 			InitGlowTex(src.width, src.height);
-			StarGlow(lowSrc, _glowTex);
+			StarGlow(lowSrc, _glowTex, angle);
 
 			switch (output) {
 			case OutputModeEnum.LowSrc:
@@ -89,6 +91,12 @@ namespace KawaseLightStreak {
 				if (!guiOn)
 					data.Save();
 			}
+			if (guiOn) {
+				if (Input.GetKeyDown(KeyCode.PageDown))
+					_win.y = Screen.height - _win.height;
+				if (Input.GetKeyDown(KeyCode.PageUp))
+					_win.y = 0f;
+			}
 		}
 
 		void ReleaseGlowTex() {
@@ -108,7 +116,7 @@ namespace KawaseLightStreak {
 			}
 			Clear(_glowTex);
 		}
-		void StarGlow(RenderTexture lowSrc, RenderTexture dst) {
+		void StarGlow(RenderTexture lowSrc, RenderTexture dst, float angle) {
 			var shapeNum = LightStreakData.ShapeNums [(int)data.data.shape];
 			var rt0 = RenderTexture.GetTemporary (lowSrc.width, lowSrc.height, 0, lowSrc.format, RenderTextureReadWrite.Linear);
 			var rt1 = RenderTexture.GetTemporary (lowSrc.width, lowSrc.height, 0, lowSrc.format, RenderTextureReadWrite.Linear);
@@ -116,7 +124,7 @@ namespace KawaseLightStreak {
 			for (var i = 0; i < shapeNum; i++) {
 				rt0.DiscardContents ();
 				Graphics.Blit (lowSrc, rt0, data.kawase, PASS_BRIGHT);
-				LightStreak (ref rt0, ref rt1, i * dtheta + data.data.angle * Mathf.Deg2Rad);
+				LightStreak (ref rt0, ref rt1, i * dtheta + angle * Mathf.Deg2Rad);
 				Graphics.Blit (rt0, dst, data.kawase, PASS_ADD);
 			}
 			RenderTexture.ReleaseTemporary (rt0);
@@ -158,10 +166,16 @@ namespace KawaseLightStreak {
 			data.data.kawase_threshold = thresh;
 
 			GUILayout.Label(string.Format("Atten:{0:f3}", data.data.atten));
-			data.data.atten = GUILayout.HorizontalSlider(data.data.atten, 0.9f, 0.95f);
+			data.data.atten = GUILayout.HorizontalSlider(data.data.atten, 0.5f, 0.95f);
 
 			GUILayout.Label(string.Format("Angle:{0:f1}", data.data.angle));
 			data.data.angle = GUILayout.HorizontalSlider(data.data.angle, 0f, 360f);
+
+			GUILayout.Label(string.Format("Rotation Speed:{0:f1}", data.data.rotation_speed));
+			data.data.rotation_speed = GUILayout.HorizontalSlider(data.data.rotation_speed, 0f, 10f);
+
+			GUILayout.Label(string.Format("LOD:{0:d1}", data.data.lod));
+			data.data.lod = Mathf.RoundToInt(GUILayout.HorizontalSlider(data.data.lod, 1f, 10f));
 
 			GUILayout.Label("Shape");
 			data.data.shape = (LightStreakData.ShapeEnum)GUILayout.Toolbar((int)data.data.shape, LightStreakData.ShapeLabels);
