@@ -4,7 +4,7 @@
 
 [Unity Package](KawaseLightStreak.unitypackage)
  
- [![Demo](Html/Thumbnail.jpg)](http://nobnak.github.io/SceneSamples/KawaseLightStreakUnity/KawaseLightStreakUnity.html)
+ [![Demo](Html/Thumbnail.jpg)](https://vimeo.com/173164170)
 
 ## References
 1. Masaki Kawase, Frame Buffer Postprocessing Effects in DOUBLE-S.T.E.A.L (Wreckless), GDC 2003
